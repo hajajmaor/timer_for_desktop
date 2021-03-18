@@ -62,8 +62,20 @@ class _MainPageState extends State<MainPage> {
       );
 
   //TODO: check the function
+
   // String timerText =>
   //     '${((timerMaxSeconds - currentSeconds) ~/ 60).toString().padLeft(2, '0')}: ${((timerMaxSeconds - currentSeconds) % 60).toString().padLeft(2, '0')}';
+  String getRemainingTime() {
+    if (_timeToRun == null) {
+      return '00:00:00';
+    }
+    final remainingTime = _timeToRun! - _timePassed;
+    final int hours = (remainingTime.inHours / 24) as int;
+    final int minutes = (remainingTime.inMinutes - (hours * 24) / 60) as int;
+    final int seconds =
+        (remainingTime.inSeconds - (hours * 24) - (minutes * 60) / 60) as int;
+    return '${hours.toString().padLeft(2, '0')}: ${(minutes.toString().padLeft(2, '0'))}: ${(seconds.toString().padLeft(2, '0'))}';
+  }
 
   activateTimer() {
     if (_timeToRun == null)
@@ -135,6 +147,10 @@ class _MainPageState extends State<MainPage> {
                 SizedBox(height: 40),
                 Text(
                   'Time:',
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+                Text(
+                  getRemainingTime(),
                   style: Theme.of(context).textTheme.headline5,
                 ),
               ],

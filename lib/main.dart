@@ -13,6 +13,8 @@ class MyApp extends StatelessWidget {
       title: 'Timer App',
       darkTheme: ThemeData.dark(),
       theme: ThemeData.light(),
+      //TODO: remove this themeMode
+      themeMode: ThemeMode.dark,
       home: MainPage(),
     );
   }
