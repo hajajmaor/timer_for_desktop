@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -21,13 +23,13 @@ class _MainPageState extends State<MainPage> {
         _secondsController = TextEditingController(text: '0');
   }
 
-  @override
-  void dispose() {
-    _minutesController.dispose();
-    _hoursController.dispose();
-    _secondsController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _minutesController.dispose();
+  //   _hoursController.dispose();
+  //   _secondsController.dispose();
+  //   super.dispose();
+  // }
 
   Widget _buildRow({
     required TextEditingController controller,
@@ -36,19 +38,19 @@ class _MainPageState extends State<MainPage> {
       Center(
         child: Container(
           height: 80,
-          width: 150,
+          width: 180,
           child: Row(
             // crossAxisAlignment: CrossAxisAlignment.center,
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 flex: 1,
-                child: Text(text),
+                child: PlatformText(text),
               ),
               SizedBox(width: 30),
               Expanded(
                 flex: 1,
-                child: TextField(
+                child: PlatformTextField(
                   controller: controller,
                   // style: TextStyle(),
                   textAlign: TextAlign.center,
@@ -99,15 +101,31 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Timer"),
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
+        leading: PlatformIconButton(
+          icon: Icon(Icons.track_changes),
+          onPressed: () {
+            final currentPlatform = PlatformProvider.of(context)!.platform;
+            if (currentPlatform == TargetPlatform.macOS ||
+                currentPlatform == TargetPlatform.iOS)
+              PlatformProvider.of(context)!.changeToMaterialPlatform();
+            else
+              PlatformProvider.of(context)!.changeToCupertinoPlatform();
+          },
+        ),
+        title: PlatformText("Timer"),
       ),
       body: Container(
-        padding: const EdgeInsets.all(10),
+        padding: EdgeInsets.all(
+          PlatformProvider.of(context)!.platform == TargetPlatform.macOS ||
+                  PlatformProvider.of(context)!.platform == TargetPlatform.iOS
+              ? 40
+              : 5,
+        ),
         constraints: BoxConstraints(
           minWidth: 400,
-          maxHeight: 450,
+          maxHeight: 600,
         ),
         // width: 400,
         // height: 400,
@@ -120,23 +138,37 @@ class _MainPageState extends State<MainPage> {
                 _buildRow(controller: _hoursController, text: 'Hours'),
                 _buildRow(controller: _minutesController, text: 'Minutes'),
                 _buildRow(controller: _secondsController, text: 'Seconds'),
+                SizedBox(
+                  height: PlatformProvider.of(context)!.platform ==
+                              TargetPlatform.macOS ||
+                          PlatformProvider.of(context)!.platform ==
+                              TargetPlatform.iOS
+                      ? 0
+                      : 20,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
                       flex: 1,
-                      child: TextButton(
+                      child: PlatformButton(
+                        materialFlat: (context, platform) =>
+                            MaterialFlatButtonData(),
                         onPressed: () {
                           _secondsController.text = _minutesController.text =
                               _hoursController.text = '0';
                         },
-                        child: Text('Clear'),
+                        child: PlatformText(
+                          'Clear',
+                        ),
                       ),
                     ),
                     Expanded(
                       flex: 1,
-                      child: TextButton(
-                        child: Text('Start countdown'),
+                      child: PlatformButton(
+                        materialFlat: (context, platform) =>
+                            MaterialFlatButtonData(),
+                        child: PlatformText('Start countdown'),
                         onPressed: () {
                           //TODO: Start the timer with the values from the controllers.
                         },
