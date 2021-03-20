@@ -10,6 +10,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    /**
+     * TODO: add this:
+     *  https://pub.dev/packages/page_view_indicators/example
+     * */
     return PlatformScaffold(
         appBar: PlatformAppBar(
           leading: SwitchPlatformIcon(),
