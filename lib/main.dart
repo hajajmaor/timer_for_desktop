@@ -2,9 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:timer_for_desktop/screens/main_page.dart';
 
-void main() {
+import 'constants.dart';
+import 'models/timer_data.dart';
+
+void main() async {
+  // init hive as local storage
+  await Hive.initFlutter();
+  Hive.registerAdapter(TimerDataAdapter());
+
+  //open hive boxes
+  await Hive.openBox<TimerData>(dTimerDataBoxName);
+
+  // ProviderScope for Riverpod state management
   runApp(ProviderScope(
     child: PlatformProvider(
       // initialPlatform: TargetPlatform.windows,
@@ -13,10 +26,6 @@ void main() {
   ));
 }
 
-const appBarGlobal = AppBarTheme(
-  centerTitle: true,
-);
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,9 +33,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Timer App',
       material: (_, __) => MaterialAppData(
-        darkTheme: ThemeData.dark().copyWith(appBarTheme: appBarGlobal),
-        theme: ThemeData.light().copyWith(appBarTheme: appBarGlobal),
-        //TODO: remove this themeMode
+        darkTheme: ThemeData.dark().copyWith(
+          appBarTheme: dAppBarGlobal,
+        ),
+        theme: ThemeData.light().copyWith(
+          appBarTheme: dAppBarGlobal,
+        ),
       ),
       home: MainPage(),
     );
