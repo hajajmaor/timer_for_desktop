@@ -12,3 +12,5 @@ const dAppBarGlobal = AppBarTheme(
 const dOneSec = Duration(seconds: 1);
 const dTimerTextStyle = TextStyle();
 const dTimerHeader = TextStyle();
+// ignore: unnecessary_raw_strings
+final dRegExpNumbers = RegExp(r'[0-9]');

@@ -13,35 +13,48 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _box = Hive.box<TimerData>(dTimerDataBoxName);
+
+    Future<void> createNewTimerData() async {
+      final _new = TimerData();
+      if (!_box.values.contains(_new)) {
+        await _box.add(_new);
+      }
+    }
+
     return PlatformScaffold(
       material: (_, __) => MaterialScaffoldData(
-          floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final _new = TimerData();
-          if (!_box.values.contains(_new)) {
-            await _box.add(_new);
-          }
-        },
-        tooltip: "Add a new timer",
-        child: const Icon(Icons.add),
-      )),
+        floatingActionButton: FloatingActionButton(
+          onPressed: createNewTimerData,
+          tooltip: "Add a new timer",
+          child: const Icon(Icons.add),
+        ),
+      ),
       appBar: PlatformAppBar(
         leading: SwitchPlatformIcon(),
         title: PlatformText("Timer"),
+        cupertino: (context, platform) => CupertinoNavigationBarData(
+          trailing: CupertinoButton(
+            onPressed: createNewTimerData,
+            child: const Icon(CupertinoIcons.add),
+          ),
+        ),
       ),
       body: ValueListenableBuilder(
         valueListenable: _box.listenable(),
         builder: (context, Box<TimerData> box, _) => box.isEmpty
             ? Container()
-            : SizedBox(
-                height: 500,
-                child: PageIndicatorContainer(
-                  length: box.length,
-                  indicatorSpace: 10.0,
-                  child: PageView.builder(
-                    itemCount: box.length,
-                    itemBuilder: (_, index) =>
-                        TimerView(timerData: box.getAt(index)!),
+            : Center(
+                child: SizedBox(
+                  height: 470,
+                  width: 450,
+                  child: PageIndicatorContainer(
+                    length: box.length,
+                    indicatorSpace: 10.0,
+                    child: PageView.builder(
+                      itemCount: box.length,
+                      itemBuilder: (_, index) =>
+                          TimerView(timerData: box.getAt(index)!),
+                    ),
                   ),
                 ),
               ),

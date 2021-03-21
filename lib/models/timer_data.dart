@@ -92,4 +92,10 @@ class TimerData extends HiveObject {
   String toString() {
     return 'TimerData(name: $name, seconds: $seconds, minutes: $minutes, hours: $hours, lastActivated: $lastActivated)';
   }
+
+  void setZero() {
+    seconds = 0;
+    hours = 0;
+    minutes = 0;
+  }
 }

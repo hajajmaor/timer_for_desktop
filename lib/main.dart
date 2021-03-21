@@ -20,7 +20,7 @@ Future<void> main() async {
   // ProviderScope for Riverpod state management
   runApp(ProviderScope(
     child: PlatformProvider(
-      initialPlatform: TargetPlatform.windows,
+      // initialPlatform: TargetPlatform.windows,
       builder: (BuildContext context) => MyApp(),
     ),
   ));
