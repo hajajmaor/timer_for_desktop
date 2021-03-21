@@ -9,7 +9,7 @@ import 'package:timer_for_desktop/screens/main_page.dart';
 import 'constants.dart';
 import 'models/timer_data.dart';
 
-void main() async {
+Future<void> main() async {
   // init hive as local storage
   await Hive.initFlutter();
   Hive.registerAdapter(TimerDataAdapter());

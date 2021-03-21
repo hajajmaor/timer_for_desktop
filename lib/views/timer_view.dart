@@ -21,24 +21,26 @@ class _TimerViewState extends State<TimerView>
       _minutesController,
       _secondsController;
   Duration? _timeToRun;
-  Timer? _timer;
-  Duration _timePassed = Duration(seconds: 0);
+  late Timer? _timer;
+  // ignore: prefer_const_constructors
+  Duration _timePassed = Duration();
 
+  @override
   void initState() {
     super.initState();
     _hoursController = _minutesController =
         _secondsController = TextEditingController(text: '0');
   }
 
-  activateTimer() {
-    if (_timeToRun == null)
+  void activateTimer() {
+    if (_timeToRun == null) {
       return;
-    else {
+    } else {
       _timer = Timer.periodic(
         dOneSec,
         (timed) {
           setState(() {
-            _timePassed += Duration(seconds: 1);
+            _timePassed += dOneSec;
             if (_timePassed >= _timeToRun!) {
               _timer!.cancel();
               //TODO: make a sound
@@ -55,11 +57,11 @@ class _TimerViewState extends State<TimerView>
       return '00:00:00';
     }
     final remainingTime = _timeToRun! - _timePassed;
-    final int hours = (remainingTime.inHours / 24) as int;
-    final int minutes = (remainingTime.inMinutes - (hours * 24) / 60) as int;
+    final int hours = remainingTime.inHours / 24 as int;
+    final int minutes = remainingTime.inMinutes - (hours * 24) / 60 as int;
     final int seconds =
-        (remainingTime.inSeconds - (hours * 24) - (minutes * 60) / 60) as int;
-    return '${hours.toString().padLeft(2, '0')}: ${(minutes.toString().padLeft(2, '0'))}: ${(seconds.toString().padLeft(2, '0'))}';
+        remainingTime.inSeconds - (hours * 24) - (minutes * 60) / 60 as int;
+    return '${hours.toString().padLeft(2, '0')}: ${minutes.toString().padLeft(2, '0')}: ${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -75,7 +77,7 @@ class _TimerViewState extends State<TimerView>
     required String text,
   }) =>
       Center(
-        child: Container(
+        child: SizedBox(
           height: 80,
           width: 180,
           child: Row(
@@ -83,12 +85,10 @@ class _TimerViewState extends State<TimerView>
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                flex: 1,
                 child: PlatformText(text),
               ),
-              SizedBox(width: 30),
+              const SizedBox(width: 30),
               Expanded(
-                flex: 1,
                 child: PlatformTextField(
                   controller: controller,
                   // style: TextStyle(),
@@ -112,7 +112,7 @@ class _TimerViewState extends State<TimerView>
             ? 40
             : 5,
       ),
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         minWidth: 400,
         maxHeight: 600,
       ),
@@ -121,7 +121,6 @@ class _TimerViewState extends State<TimerView>
       child: SingleChildScrollView(
         child: Center(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildRow(controller: _hoursController, text: 'Hours'),
@@ -139,7 +138,6 @@ class _TimerViewState extends State<TimerView>
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Expanded(
-                    flex: 1,
                     child: PlatformButton(
                       materialFlat: (context, platform) =>
                           MaterialFlatButtonData(),
@@ -153,20 +151,19 @@ class _TimerViewState extends State<TimerView>
                     ),
                   ),
                   Expanded(
-                    flex: 1,
                     child: PlatformButton(
                       materialFlat: (context, platform) =>
                           MaterialFlatButtonData(),
-                      child: PlatformText('Start countdown'),
                       onPressed: () {
                         //TODO: Start the timer with the values from the controllers.
                       },
+                      child: PlatformText('Start countdown'),
                     ),
                   )
                 ],
               ),
-              SizedBox(height: 40),
-              Text(
+              const SizedBox(height: 40),
+              const Text(
                 'Time:',
                 style: dTimerHeader,
               ),

@@ -23,7 +23,7 @@ class MainPage extends StatelessWidget {
           }
         },
         tooltip: "Add a new timer",
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       )),
       appBar: PlatformAppBar(
         leading: SwitchPlatformIcon(),
@@ -33,15 +33,17 @@ class MainPage extends StatelessWidget {
         valueListenable: _box.listenable(),
         builder: (context, Box<TimerData> box, _) => box.isEmpty
             ? Container()
-            : PageIndicatorContainer(
-                length: box.length,
-                align: IndicatorAlign.bottom,
-                child: PageView.builder(
-                  itemCount: box.length,
-                  itemBuilder: (_, index) =>
-                      TimerView(timerData: box.getAt(index)!),
+            : SizedBox(
+                height: 500,
+                child: PageIndicatorContainer(
+                  length: box.length,
+                  indicatorSpace: 10.0,
+                  child: PageView.builder(
+                    itemCount: box.length,
+                    itemBuilder: (_, index) =>
+                        TimerView(timerData: box.getAt(index)!),
+                  ),
                 ),
-                indicatorSpace: 10.0,
               ),
       ),
     );

@@ -5,14 +5,15 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 class SwitchPlatformIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PlatformIconButton(
-        icon: Icon(Icons.track_changes),
+        icon: const Icon(Icons.track_changes),
         onPressed: () {
           final currentPlatform = PlatformProvider.of(context)!.platform;
           if (currentPlatform == TargetPlatform.macOS ||
-              currentPlatform == TargetPlatform.iOS)
+              currentPlatform == TargetPlatform.iOS) {
             PlatformProvider.of(context)!.changeToMaterialPlatform();
-          else
+          } else {
             PlatformProvider.of(context)!.changeToCupertinoPlatform();
+          }
         },
       );
 }

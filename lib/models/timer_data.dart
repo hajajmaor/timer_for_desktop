@@ -26,15 +26,16 @@ class TimerData extends HiveObject {
   });
 
   factory TimerData.fromJson(String source) =>
-      TimerData.fromMap(json.decode(source));
+      TimerData.fromMap(json.decode(source) as Map<String, dynamic>);
 
   factory TimerData.fromMap(Map<String, dynamic> map) {
     return TimerData(
-      name: map['name'],
-      seconds: map['seconds'],
-      minutes: map['minutes'],
-      hours: map['hours'],
-      lastActivated: DateTime.fromMillisecondsSinceEpoch(map['lastActivated']),
+      name: map['name'] as String,
+      seconds: map['seconds'] as int,
+      minutes: map['minutes'] as int,
+      hours: map['hours'] as int,
+      lastActivated:
+          DateTime.fromMillisecondsSinceEpoch(map['lastActivated'] as int),
     );
   }
 
