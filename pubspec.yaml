@@ -28,6 +28,7 @@ dependencies:
   flutter_riverpod: ^0.13.1
   hive: ^2.0.0
   hive_flutter: ^1.0.0
+  page_indicator: ^0.4.1
 
 dev_dependencies:
   flutter_test:
