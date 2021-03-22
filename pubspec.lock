@@ -219,9 +219,9 @@ packages:
   flutter_launcher_icons:
     dependency: "direct dev"
     description:
-      name: flutter_launcher_icons
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../flutter_launcher_icons"
+      relative: true
+    source: path
     version: "0.9.0"
   flutter_platform_widgets:
     dependency: "direct main"

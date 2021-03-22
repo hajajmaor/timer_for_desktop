@@ -35,7 +35,8 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^1.11.1
 
-  flutter_launcher_icons: ^0.9.0
+  flutter_launcher_icons:
+    path: ../flutter_launcher_icons
   hive_generator: ^1.0.0
   lint: ^1.5.3
 
@@ -44,7 +45,7 @@ flutter_icons:
   ios: false
   macos: true
   windows: true
-  linux: true
+  # linux: true
   image_path: "assets/icon.jpeg"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
