@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:hive/hive.dart';
+import 'package:timer_for_desktop/components/timer_row.dart';
+
 import 'package:timer_for_desktop/constants.dart';
 import 'package:timer_for_desktop/models/timer_data.dart';
 
@@ -20,11 +21,13 @@ class TimerView extends StatefulWidget {
 
 class _TimerViewState extends State<TimerView>
     with AutomaticKeepAliveClientMixin {
-  late final TextEditingController _hoursController,
-      _minutesController,
-      _secondsController;
+  late final TextEditingController _hoursController;
+  late final TextEditingController _minutesController;
+  late final TextEditingController _nameController;
+  late final TextEditingController _secondsController;
   Duration? _timeToRun;
   Timer? _timer;
+
   // ignore: prefer_const_constructors
   Duration _timePassed = Duration();
 
@@ -34,9 +37,9 @@ class _TimerViewState extends State<TimerView>
     _hoursController = TextEditingController(text: '0');
     _minutesController = TextEditingController(text: '0');
     _secondsController = TextEditingController(text: '0');
+    _nameController =
+        TextEditingController(text: widget.timerData.name ?? 'name');
   }
-
-  void activateTimer() {}
 
   String getRemainingTime() {
     if (_timeToRun == null) {
@@ -57,79 +60,46 @@ class _TimerViewState extends State<TimerView>
     super.dispose();
   }
 
-  Widget _buildRow({
-    required TextEditingController controller,
-    required String text,
-    required BuildContext context,
-    required double width,
-    required void Function(String) onChanged,
-  }) =>
-      Center(
-        child: Container(
-          // color: Colors.green,
-          padding: const EdgeInsets.all(5),
-          height: width > 300 ? 80 : 105,
-          width: 200,
-          child: Flex(
-            direction: width > 300 ? Axis.horizontal : Axis.vertical,
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              PlatformText('$text:'),
-              Expanded(
-                child: Container(),
-              ),
-              SizedBox(
-                width: 80,
-                child: PlatformTextField(
-                  keyboardType: TextInputType.number,
-                  controller: controller,
-                  textAlign: TextAlign.center,
-                  onChanged: onChanged,
-                  textAlignVertical: TextAlignVertical.center,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(dRegExpNumbers),
-                  ],
-                  material: (context, platform) => MaterialTextFieldData(
-                    decoration:
-                        const InputDecoration(counterText: 'Numbers only'),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final width = MediaQuery.of(context).size.width;
 
-    return Stack(
-      children: [
-        Container(
-          padding: EdgeInsets.all(
-            PlatformProvider.of(context)!.platform == TargetPlatform.macOS ||
-                    PlatformProvider.of(context)!.platform == TargetPlatform.iOS
-                ? 40
-                : 5,
-          ),
-          // color: Colors.amberAccent,
-
-          constraints: const BoxConstraints(
-            minWidth: 400,
-            maxHeight: 500,
-          ),
-          // color: Colors.red,
-          // width: 400,
-          // height: 400,
-          child: SingleChildScrollView(
+    return Container(
+      padding: EdgeInsets.all(
+        PlatformProvider.of(context)!.platform == TargetPlatform.macOS ||
+                PlatformProvider.of(context)!.platform == TargetPlatform.iOS
+            ? 40
+            : 5,
+      ),
+      margin: const EdgeInsets.all(8),
+      color: Colors.amberAccent,
+      constraints: BoxConstraints(
+        // minWidth: 400,
+        maxWidth: 330,
+        maxHeight: width > 300 ? 415 : 600,
+      ),
+      child: Stack(
+        children: [
+          SingleChildScrollView(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildRow(
+                  SizedBox(
+                    height: 50,
+                    width: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: PlatformTextField(
+                        textAlign: TextAlign.center,
+                        // style: TextStyle(),
+                        controller: _nameController,
+                        onChanged: (value) => widget.timerData.name = value,
+                      ),
+                    ),
+                  ),
+                  TimerRow(
                     onChanged: (String value) {
                       widget.timerData.hours = int.tryParse(value) ?? 0;
                     },
@@ -138,7 +108,7 @@ class _TimerViewState extends State<TimerView>
                     context: context,
                     width: width,
                   ),
-                  _buildRow(
+                  TimerRow(
                     onChanged: (String value) {
                       widget.timerData.minutes = int.tryParse(value) ?? 0;
                     },
@@ -147,7 +117,7 @@ class _TimerViewState extends State<TimerView>
                     context: context,
                     width: width,
                   ),
-                  _buildRow(
+                  TimerRow(
                     onChanged: (String value) {
                       widget.timerData.seconds = int.tryParse(value) ?? 0;
                     },
@@ -164,81 +134,82 @@ class _TimerViewState extends State<TimerView>
                         ? 0
                         : 20,
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: width > 300 ? 300 : 215,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: PlatformButton(
-                              materialFlat: (context, platform) =>
-                                  MaterialFlatButtonData(),
-                              onPressed: () => setState(
-                                () {
-                                  (_timer?.isActive ?? false)
-                                      ? _timer!.cancel()
-                                      : _secondsController.text = '0';
-                                  _minutesController.text = '0';
-                                  _hoursController.text = '0';
-                                  widget.timerData.setZero();
-                                  _timeToRun = const Duration();
-                                  _timePassed = const Duration();
-                                },
-                              ),
-                              child: PlatformText(
-                                (_timer?.isActive ?? false) ? 'Stop' : 'Clear',
-                              ),
+                  SizedBox(
+                    width: width > 400 ? 300 : 215,
+                    height: 50,
+                    child: Flex(
+                      direction: width > 400 ? Axis.horizontal : Axis.vertical,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: PlatformButton(
+                            materialFlat: (context, platform) =>
+                                MaterialFlatButtonData(),
+                            onPressed: () => setState(
+                              () {
+                                (_timer?.isActive ?? false)
+                                    ? _timer!.cancel()
+                                    : _secondsController.text = '0';
+                                _minutesController.text = '0';
+                                _hoursController.text = '0';
+                                widget.timerData.setZero();
+                                _timeToRun = const Duration();
+                                _timePassed = const Duration();
+                              },
+                            ),
+                            child: PlatformText(
+                              (_timer?.isActive ?? false) ? 'Stop' : 'Clear',
                             ),
                           ),
-                          Expanded(
-                            child: PlatformButton(
-                              materialFlat: (context, platform) =>
-                                  MaterialFlatButtonData(),
-                              onPressed: () {
-                                if (_timer != null) {
-                                  _timer!.cancel();
-                                }
-                                _timeToRun = Duration(
-                                  hours: widget.timerData.hours ?? 0,
-                                  minutes: widget.timerData.minutes ?? 0,
-                                  seconds: widget.timerData.seconds ?? 0,
-                                );
-                                _timer = Timer.periodic(
-                                  dOneSec,
-                                  (timed) {
-                                    setState(() {
-                                      _timePassed =
-                                          Duration(seconds: timed.tick);
-                                      if (_timePassed >= _timeToRun!) {
-                                        _timer!.cancel();
-                                        //TODO: make a sound
-                                        showPlatformDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              PlatformAlertDialog(
-                                            content: PlatformText(
-                                              'Time Passed',
-                                              style: const TextStyle(
-                                                fontSize: 30,
-                                              ),
+                        ),
+                        SizedBox(
+                          height: width > 400 ? 0 : 20,
+                        ),
+                        Expanded(
+                          child: PlatformButton(
+                            materialFlat: (context, platform) =>
+                                MaterialFlatButtonData(),
+                            onPressed: () {
+                              if (_timer != null) {
+                                _timer!.cancel();
+                              }
+                              _timeToRun = Duration(
+                                hours: widget.timerData.hours ?? 0,
+                                minutes: widget.timerData.minutes ?? 0,
+                                seconds: widget.timerData.seconds ?? 0,
+                              );
+                              _timer = Timer.periodic(
+                                dOneSec,
+                                (timed) {
+                                  setState(() {
+                                    _timePassed = Duration(seconds: timed.tick);
+                                    if (_timePassed >= _timeToRun!) {
+                                      _timer!.cancel();
+                                      //TODO: make a sound
+                                      showPlatformDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            PlatformAlertDialog(
+                                          content: PlatformText(
+                                            'Timer: ${widget.timerData.name}: Time Passed',
+                                            style: const TextStyle(
+                                              fontSize: 30,
                                             ),
                                           ),
-                                        );
-                                      }
-                                    });
-                                  },
-                                );
-                              },
-                              child: PlatformText(
-                                'Start countdown',
-                                textAlign: TextAlign.center,
-                              ),
+                                        ),
+                                      );
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                            child: PlatformText(
+                              'Start countdown',
+                              textAlign: TextAlign.center,
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -254,29 +225,26 @@ class _TimerViewState extends State<TimerView>
               ),
             ),
           ),
-        ),
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: PlatformIconButton(
-            onPressed: () async {
-              // Hive.box<TimerData>(dTimerDataBoxName).values.firstWhere(
-              // (element) => element == widget.timerData,
-              // );
-              final box = Hive.box<TimerData>(dTimerDataBoxName);
-              final data = box.values;
-              for (var i = 0; i < data.length; i++) {
-                if (data.elementAt(i) == widget.timerData) {
-                  await box.deleteAt(i);
-                  return;
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: PlatformIconButton(
+              onPressed: () async {
+                final box = Hive.box<TimerData>(dTimerDataBoxName);
+                final data = box.values;
+                for (var i = 0; i < data.length; i++) {
+                  if (data.elementAt(i) == widget.timerData) {
+                    await box.deleteAt(i);
+                    return;
+                  }
                 }
-              }
-            },
-            icon: Icon(
-              PlatformIcons(context).delete,
+              },
+              icon: Icon(
+                PlatformIcons(context).delete,
+              ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 

@@ -18,7 +18,7 @@ class TimerData extends HiveObject {
   DateTime? lastActivated;
 
   TimerData({
-    this.name,
+    this.name = 'name',
     this.seconds,
     this.minutes,
     this.hours,
