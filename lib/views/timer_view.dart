@@ -185,6 +185,8 @@ class _TimerViewState extends State<TimerView>
                                           context: context,
                                           builder: (context) =>
                                               PlatformAlertDialog(
+                                            title: Text(widget.timerData.name ??
+                                                'Timer'),
                                             actions: [
                                               PlatformDialogAction(
                                                 onPressed: () =>
@@ -193,7 +195,7 @@ class _TimerViewState extends State<TimerView>
                                               ),
                                             ],
                                             content: PlatformText(
-                                              'Timer: ${widget.timerData.name}: Time Passed',
+                                              'Time Passed',
                                               style: const TextStyle(
                                                 fontSize: 30,
                                               ),
