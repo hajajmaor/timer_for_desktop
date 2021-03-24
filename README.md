@@ -6,7 +6,7 @@ A timer application for desktop, made with Flutter.
 
 ### Home Screen:
 
-<div style='height:300px'>
+<div style='height:250px'>
 
 <img src="assets\screenshots\windows_material.jpg" width="45%">
 <img src="assets\screenshots\windows_cupertino.jpg" width="45%">
