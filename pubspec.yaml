@@ -34,19 +34,24 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^1.11.1
-
-  flutter_launcher_icons:
-    path: ../flutter_launcher_icons
   hive_generator: ^1.0.0
   lint: ^1.5.3
 
-flutter_icons:
-  android: false
-  ios: false
-  macos: true
-  windows: true
-  # linux: true
-  image_path: "assets/icon.jpeg"
+#   flutter_launcher_icons:
+#     path: ../flutter_launcher_icons
+#   # repo : https://github.com/dirkbo/flutter_launcher_icons
+#   # by the time of writing the PR is yet to me merged
+
+# flutter_icons:
+#   android: false
+#   ios: false
+#   macos: true
+#   windows: true
+#   # linux: true
+#   image_path: "assets/icon.png"
+#   # run with:
+#   # flutter pub run flutter_launcher_icons:main
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter.

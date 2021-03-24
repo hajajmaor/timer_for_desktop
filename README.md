@@ -1,16 +1,64 @@
 # timer_for_desktop
 
-A new Flutter project.
+A timer application for desktop, made with Flutter.
+
+## Screenshots
+
+```
+TODO: add screenshots
+```
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1.  Clone it:
 
-A few resources to get you started if this is your first Flutter project:
+    ```
+    git clone https://github.com/hajajmaor/timer_for_desktop
+    ```
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+2.  (`Optional`) Clone dirkbo/flutter_launcher_icons:
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    - Clone only if you intent to change the application's icon.
+
+      ```
+      cd ../
+      git clone https://github.com/dirkbo/flutter_launcher_icons
+      ```
+
+    - Then head for `pubspec.yaml` and uncomment lines `40-53`
+
+      ```
+      dev_dependencies:
+
+      # flutter_launcher_icons:
+      # path: ../flutter_launcher_icons
+      # # repo : https://github.com/dirkbo/flutter_launcher_icons
+      # # by the time of writing the PR is yet to me merged
+      # flutter_icons:
+      #   android: false
+      #   ios: false
+      #   macos: true
+      #   windows: true
+      #   # linux: true
+      #   image_path: "assets/icon.png"
+      #   # run with:
+      #   # flutter pub run flutter_launcher_icons:main
+
+      ```
+
+    - Then change the path of `image_path:` to your image and run:
+
+    ```
+
+    flutter pub run flutter_launcher_icons:main
+
+    ```
+
+3.  Run and enjoy
+    ```
+    flutter run -d <device>
+    ```
+
+<hr>
+
+## Fork it, add issues, add PRs, basicly ENJOY!!

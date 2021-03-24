@@ -64,13 +64,12 @@ class _TimerViewState extends State<TimerView>
   Widget build(BuildContext context) {
     super.build(context);
     final width = MediaQuery.of(context).size.width;
-
+    final bool isCupertino =
+        PlatformProvider.of(context)!.platform == TargetPlatform.macOS ||
+            PlatformProvider.of(context)!.platform == TargetPlatform.iOS;
     return Container(
       padding: EdgeInsets.all(
-        PlatformProvider.of(context)!.platform == TargetPlatform.macOS ||
-                PlatformProvider.of(context)!.platform == TargetPlatform.iOS
-            ? 40
-            : 5,
+        isCupertino ? 20 : 5,
       ),
       margin: const EdgeInsets.all(8),
       color: Colors.amberAccent,
@@ -127,12 +126,7 @@ class _TimerViewState extends State<TimerView>
                     width: width,
                   ),
                   SizedBox(
-                    height: PlatformProvider.of(context)!.platform ==
-                                TargetPlatform.macOS ||
-                            PlatformProvider.of(context)!.platform ==
-                                TargetPlatform.iOS
-                        ? 0
-                        : 20,
+                    height: isCupertino ? 0 : 20,
                   ),
                   SizedBox(
                     width: width > 400 ? 300 : 215,
@@ -143,8 +137,7 @@ class _TimerViewState extends State<TimerView>
                       children: [
                         Expanded(
                           child: PlatformButton(
-                            materialFlat: (context, platform) =>
-                                MaterialFlatButtonData(),
+                            materialFlat: (_, __) => MaterialFlatButtonData(),
                             onPressed: () => setState(
                               () {
                                 (_timer?.isActive ?? false)
@@ -178,30 +171,40 @@ class _TimerViewState extends State<TimerView>
                                 minutes: widget.timerData.minutes ?? 0,
                                 seconds: widget.timerData.seconds ?? 0,
                               );
-                              _timer = Timer.periodic(
-                                dOneSec,
-                                (timed) {
-                                  setState(() {
-                                    _timePassed = Duration(seconds: timed.tick);
-                                    if (_timePassed >= _timeToRun!) {
-                                      _timer!.cancel();
-                                      //TODO: make a sound
-                                      showPlatformDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            PlatformAlertDialog(
-                                          content: PlatformText(
-                                            'Timer: ${widget.timerData.name}: Time Passed',
-                                            style: const TextStyle(
-                                              fontSize: 30,
+                              if (_timeToRun! > const Duration()) {
+                                _timer = Timer.periodic(
+                                  dOneSec,
+                                  (timed) {
+                                    setState(() {
+                                      _timePassed =
+                                          Duration(seconds: timed.tick);
+                                      if (_timePassed >= _timeToRun!) {
+                                        _timer!.cancel();
+                                        //TODO: make a sound
+                                        showPlatformDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              PlatformAlertDialog(
+                                            actions: [
+                                              PlatformDialogAction(
+                                                onPressed: () =>
+                                                    Navigator.of(context).pop(),
+                                                child: PlatformText('OK'),
+                                              ),
+                                            ],
+                                            content: PlatformText(
+                                              'Timer: ${widget.timerData.name}: Time Passed',
+                                              style: const TextStyle(
+                                                fontSize: 30,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      );
-                                    }
-                                  });
-                                },
-                              );
+                                        );
+                                      }
+                                    });
+                                  },
+                                );
+                              }
                             },
                             child: PlatformText(
                               'Start countdown',
@@ -227,19 +230,22 @@ class _TimerViewState extends State<TimerView>
           ),
           Align(
             alignment: Alignment.bottomLeft,
-            child: PlatformIconButton(
-              onPressed: () async {
-                final box = Hive.box<TimerData>(dTimerDataBoxName);
-                final data = box.values;
-                for (var i = 0; i < data.length; i++) {
-                  if (data.elementAt(i) == widget.timerData) {
-                    await box.deleteAt(i);
-                    return;
+            child: Tooltip(
+              message: 'Delete this timer',
+              child: PlatformIconButton(
+                onPressed: () async {
+                  final box = Hive.box<TimerData>(dTimerDataBoxName);
+                  final data = box.values;
+                  for (var i = 0; i < data.length; i++) {
+                    if (data.elementAt(i) == widget.timerData) {
+                      await box.deleteAt(i);
+                      return;
+                    }
                   }
-                }
-              },
-              icon: Icon(
-                PlatformIcons(context).delete,
+                },
+                icon: Icon(
+                  PlatformIcons(context).delete,
+                ),
               ),
             ),
           )

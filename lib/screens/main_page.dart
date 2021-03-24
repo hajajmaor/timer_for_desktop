@@ -10,25 +10,47 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:timer_for_desktop/views/timer_view.dart';
 
 class MainPage extends StatelessWidget {
+  Future<void> createNewTimerData({required BuildContext context}) async {
+    final _new = TimerData();
+    final _box = Hive.box<TimerData>(dTimerDataBoxName);
+
+    if (!_box.values.contains(_new)) {
+      await _box.add(_new);
+    } else {
+      showPlatformDialog(
+        context: context,
+        builder: (context) => PlatformAlertDialog(
+          content: PlatformText(
+            'You already have new timer, use it',
+            style: const TextStyle(
+              fontSize: 30,
+            ),
+          ),
+          actions: [
+            PlatformDialogAction(
+              onPressed: () => Navigator.of(context).pop(),
+              child: PlatformText('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final _box = Hive.box<TimerData>(dTimerDataBoxName);
-
-    Future<void> createNewTimerData({BuildContext? context}) async {
-      final _new = TimerData();
-      // if (!_box.values.contains(_new)) {
-      await _box.add(_new);
-      // } else {
-      //   showToastWidget(const Text('you have empty timer already, use it'),
-      //       context: context);
-      // }
-    }
+    final bool isCupertino =
+        PlatformProvider.of(context)!.platform == TargetPlatform.macOS ||
+            PlatformProvider.of(context)!.platform == TargetPlatform.iOS;
 
     return PlatformScaffold(
       material: (context, __) => MaterialScaffoldData(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            createNewTimerData();
+            createNewTimerData(
+              context: context,
+            );
           },
           tooltip: "Add a new timer",
           child: const Icon(Icons.add),
@@ -39,7 +61,11 @@ class MainPage extends StatelessWidget {
         title: PlatformText("Timer"),
         cupertino: (context, platform) => CupertinoNavigationBarData(
           trailing: CupertinoButton(
-            onPressed: createNewTimerData,
+            onPressed: () {
+              createNewTimerData(
+                context: context,
+              );
+            },
             child: const Icon(CupertinoIcons.add),
           ),
         ),
@@ -65,7 +91,6 @@ class MainPage extends StatelessWidget {
                   child: CarouselSlider.builder(
                     options: CarouselOptions(
                       height: constraints.maxWidth > 400 ? 420 : 540,
-                      // pageSnapping: false,
                       viewportFraction: 0.70,
                       enableInfiniteScroll: false,
                     ),
@@ -75,27 +100,26 @@ class MainPage extends StatelessWidget {
                   ),
                 );
               } else {
-                return Builder(
-                  builder: (_) {
-                    final List<Widget> widgets = [];
-                    for (final item in items) {
-                      widgets.add(TimerView(timerData: item));
-                    }
-
-                    //  box.values.forEach((element) =>TimerView(timerData: element));
-                    return Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: SingleChildScrollView(
-                        child: Wrap(
-                          // direction: Axis.vertical,
-
-                          // verticalDirection: VerticalDirection.up,
-                          // alignment: WrapAlignment.spaceBetween,
-                          children: widgets,
+                return Padding(
+                  padding: EdgeInsets.only(
+                    top: isCupertino ? 45 : 0,
+                  ),
+                  child: Builder(
+                    builder: (_) {
+                      final List<Widget> widgets = [];
+                      for (final item in items) {
+                        widgets.add(TimerView(timerData: item));
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: SingleChildScrollView(
+                          child: Wrap(
+                            children: widgets,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 );
               }
             },
