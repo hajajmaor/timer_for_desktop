@@ -6,23 +6,40 @@ A timer application for desktop, made with Flutter.
 
 ### Home Screen:
 
+<div>
+
 <img src="assets\screenshots\windows_material.jpg" width="45%">
 <img src="assets\screenshots\windows_cupertino.jpg" width="45%" height="235px">
-
+    
+</div>
+    
 ### One Timer:
+
+<div>
 
 <img src="assets\screenshots\windows_material_oneTimer.jpg" width="45%">
 <img src="assets\screenshots\windows_cupertino_oneTimer.jpg" width="45%">
 
+</div>
+
 ### Try to add another blank timer:
+
+<div>
 
 <img src="assets\screenshots\windows_material_attempt.jpg" width="45%">
 <img src="assets\screenshots\windows_cupertino_attempt.jpg" width="45%">
 
+</div>
+
+
 ### Alert - timer is done:
+
+<div>
 
 <img src="assets\screenshots\windows_material_alert.jpg" width="45%">
 <img src="assets\screenshots\windows_cupertino_alert.jpg" width="45%">
+
+</div>
 
 <hr>
 
