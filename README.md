@@ -4,9 +4,27 @@ A timer application for desktop, made with Flutter.
 
 ## Screenshots
 
-```
-TODO: add screenshots
-```
+### Home Screen:
+
+<img src="assets\screenshots\windows_material.jpg" width="45%">
+<img src="assets\screenshots\windows_cupertino.jpg" width="45%" height="235px">
+
+### One Timer:
+
+<img src="assets\screenshots\windows_material_oneTimer.jpg" width="45%">
+<img src="assets\screenshots\windows_cupertino_oneTimer.jpg" width="45%">
+
+### Try to add another blank timer:
+
+<img src="assets\screenshots\windows_material_attempt.jpg" width="45%">
+<img src="assets\screenshots\windows_cupertino_attempt.jpg" width="45%">
+
+### Alert - timer is done:
+
+<img src="assets\screenshots\windows_material_alert.jpg" width="45%">
+<img src="assets\screenshots\windows_cupertino_alert.jpg" width="45%">
+
+<hr>
 
 ## Getting Started
 
